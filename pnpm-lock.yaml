@@ -5,6 +5,7 @@ specifiers:
   '@types/node': ^17.0.18
   dotenv: ^16.0.0
   knex: ^1.0.3
+  lodash: ^4.17.21
   mysql: ^2.18.1
   netlify-cli: ^9.6.5
   prettier: ^2.5.1
@@ -14,6 +15,7 @@ specifiers:
 dependencies:
   dotenv: 16.0.0
   knex: 1.0.3_mysql@2.18.1
+  lodash: 4.17.21
   mysql: 2.18.1
 
 devDependencies:
