@@ -23,6 +23,8 @@ import { FinaleNameplate } from './modules/finale/@types/database/FinaleNameplat
 import { FinaleIcon } from './modules/finale/@types/database/FinaleIcon'
 import { readFrame } from './modules/finale/readFrame'
 import { FinaleFrame } from './modules/finale/@types/database/FinaleFrame'
+import { readTitle } from './modules/finale/readTitle'
+import { FinaleTitle } from './modules/finale/@types/database/FinaleTitle'
 
 dotenv.config()
 ;(async () => {
@@ -36,10 +38,11 @@ dotenv.config()
     readMusic(textout),
     readItem(textout),
   ])
-  const [icons, nameplates, frames] = await Promise.all([
+  const [icons, nameplates, frames, titles] = await Promise.all([
     readIcon(textout, items),
     readNameplate(textout, items),
     readFrame(textout, items),
+    readTitle(textout, items),
   ])
 
   // read database
@@ -50,12 +53,14 @@ dotenv.config()
     databaseFinaleNameplate,
     databaseFinaleIcon,
     databaseFinaleFrame,
+    databaseFinaleTitle,
   ] = await Promise.all([
     knex<FinaleMusic>('praditnet_finale_music').select('*'),
     knex<FinaleScore>('praditnet_finale_score').select('*'),
     knex<FinaleNameplate>('praditnet_finale_nameplate').select('*'),
     knex<FinaleIcon>('praditnet_finale_icon').select('*'),
     knex<FinaleFrame>('praditnet_finale_frame').select('*'),
+    knex<FinaleTitle>('praditnet_finale_title').select('*'),
   ])
   // const maimai_user_item = await knex('maimai_user_item').select('*')
   // console.log(uniq(maimai_user_item.map(o => o.item_kind)))
@@ -112,6 +117,15 @@ dotenv.config()
 
     if (!targetFrame) {
       await knex<FinaleFrame>('praditnet_finale_frame').insert(frame)
+    }
+  }
+
+  // update database for finale titles
+  for await (const title of titles) {
+    const targetTitle = databaseFinaleTitle.find(o => o.id === title.id)
+
+    if (!targetTitle) {
+      await knex<FinaleTitle>('praditnet_finale_title').insert(title)
     }
   }
 

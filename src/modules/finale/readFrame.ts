@@ -11,7 +11,7 @@ import { promiseSpawn } from '../../functions/promiseSpawn'
 import { Item } from './@types/Item'
 import { Textout } from './@types/Textout'
 
-// name plate item category: 5
+// frame item category: 5
 
 export const readFrame = async (textouts: Textout[], items: Item[]) => {
   const encryptedFramePath = path.join(
@@ -73,7 +73,7 @@ export const readFrame = async (textouts: Textout[], items: Item[]) => {
         description: items.find(o => o.id === Number(item['ItemID'])).text,
         price: items.find(o => o.id === Number(item['ItemID'])).price,
         genre: items.find(o => o.id === Number(item['ItemID'])).genre,
-      }))
+      })).filter(o => o.name !== 'フレーム設定なし')
     
       // console.log(uniq(parsedLine.map(item => items.find(o => o.id === Number(item['ItemID'])).category)))
 
