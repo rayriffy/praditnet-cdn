@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@types/crypto-js': ^4.1.1
+  '@types/lodash': ^4.14.179
   '@types/node': ^17.0.19
   '@types/xml2js': ^0.4.9
   dotenv: ^16.0.0
@@ -23,6 +24,7 @@ dependencies:
 
 devDependencies:
   '@types/crypto-js': 4.1.1
+  '@types/lodash': 4.14.179
   '@types/node': 17.0.19
   '@types/xml2js': 0.4.9
   netlify-cli: 9.6.10
@@ -2575,6 +2577,10 @@ packages:
     resolution: {integrity: sha512-FXCJgyyN3ivVgRoml4h94G/p3kY+u/B86La+QptcqJaWtBWtmc6TtkNfS40n9bIvyLteHh7zXOtgbobORKPbDg==}
     dependencies:
       '@types/node': 17.0.19
+    dev: true
+
+  /@types/lodash/4.14.179:
+    resolution: {integrity: sha512-uwc1x90yCKqGcIOAT6DwOSuxnrAbpkdPsUOZtwrXb4D/6wZs+6qG7QnIawDuZWg0sWpxl+ltIKCaLoMlna678w==}
     dev: true
 
   /@types/minimatch/3.0.5:

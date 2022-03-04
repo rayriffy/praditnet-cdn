@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import xml2js from 'xml2js'
+import { extractorDirectory } from '../../constants/extractorDirectory'
 
 import { publicDirectory } from '../../constants/publicDirectory'
 import { promiseSpawn } from '../../functions/promiseSpawn'
@@ -35,19 +36,46 @@ export const processSystemVoice = async (chunithmOptionDirectory: string) => {
 
     const jacketName = systemVoice.SystemVoiceData.image[0].path[0]
 
-    const outputDirectory = path.join(publicDirectory, 'chunithm', 'systemVoice')
-    const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
+    /**
+     * Extract system voice icon
+     */
+    const outputIconDirectory = path.join(publicDirectory, 'chunithm', 'systemVoice', 'icon')
+    const expectedIconFilePath = path.join(outputIconDirectory, `${payload.id}.png`)
 
-    if (!fs.existsSync(outputDirectory)) {
-      await fs.promises.mkdir(outputDirectory, {
+    if (!fs.existsSync(outputIconDirectory)) {
+      await fs.promises.mkdir(outputIconDirectory, {
         recursive: true,
       })
     }
 
-    if (!fs.existsSync(expectedFilePath)) {
+    if (!fs.existsSync(expectedIconFilePath)) {
       await promiseSpawn('convert', [
         `'${path.join(systemVoiceDirectory, jacketName)}'`,
-        `'${expectedFilePath}'`,
+        `'${expectedIconFilePath}'`,
+      ], {
+        shell: true,
+      })
+    }
+
+    /**
+     * Get sample audio
+     */
+    const targetSystemVoiceSampleFilePath = path.join(extractorDirectory, 'output', 'chusan', 'sound', 'systemvoice', payload.id.toString(), 'dat_000034.wav')
+    const outputSystemVoiceSampleDirectory = path.join(publicDirectory, 'chunithm', 'systemVoice', 'sample')
+    const expectedSystemVoiceSampleFilePath = path.join(outputSystemVoiceSampleDirectory, `${payload.id}.mp3`)
+
+    if (!fs.existsSync(outputSystemVoiceSampleDirectory)) {
+      await fs.promises.mkdir(outputSystemVoiceSampleDirectory, {
+        recursive: true,
+      })
+    }
+
+    if (!fs.existsSync(expectedSystemVoiceSampleFilePath)) {
+      await promiseSpawn('ffmpeg', [
+        '-i',
+        `'${targetSystemVoiceSampleFilePath}'`,
+        '-acodec libmp3lame',
+        `'${expectedSystemVoiceSampleFilePath}'`,
       ], {
         shell: true,
       })

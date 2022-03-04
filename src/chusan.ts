@@ -1,5 +1,8 @@
 import fs from 'fs'
 import path from 'path'
+
+import { uniqBy } from 'lodash'
+
 import { chunithmDirectory } from './constants/chunithmDirectory'
 
 import { createKnexInstance } from './functions/createKnexInstance'
@@ -39,7 +42,7 @@ import { readDDS } from './modules/chusan/readDDS'
     ] = await Promise.all([
       knex('praditnet_chunithm_music').select('*'),
       knex('praditnet_chunithm_systemVoice').select('*'),
-      knex('praditnet_chunithm_namePlate').select('*'),
+      knex('praditnet_chunithm_nameplate').select('*'),
       knex('praditnet_chunithm_trophy').select('*'),
       knex('praditnet_chunithm_character').select('*'),
       knex('praditnet_chunithm_avatarAccessory').select('*'),
@@ -75,7 +78,7 @@ import { readDDS } from './modules/chusan/readDDS'
 
       if (!targetNamePlate) {
         console.log(`namePlate:write ${namePlate.id}`)
-        await knex('praditnet_chunithm_namePlate').insert(namePlate)
+        await knex('praditnet_chunithm_nameplate').insert(namePlate)
       }
     }
 

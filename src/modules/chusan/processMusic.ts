@@ -46,6 +46,8 @@ export const processMusic = async (chunithmOptionDirectory: string) => {
       level_expert: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[2])),
       level_master: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[3])),
       level_ultima: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[4])),
+      genre: Number(music.MusicData.genreNames[0].list[0].StringID[0].id[0]),
+      // genreName: music.MusicData.genreNames[0].list[0].StringID[0].str[0],
     }
 
     const jacketName = music.MusicData.jaketFile[0].path[0]
