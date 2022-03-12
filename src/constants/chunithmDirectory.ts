@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const basePath = '/Volumes/Arcade/CHUNITHM NEW!!/0.00 - Active in cabs/App'
+const basePath = '/Volumes/Arcade/CHUNITHM NEW!!/2.05 - CHUNITHM NEW!! PLUS/App'
 
 export const chunithmDirectory = {
   app: basePath,

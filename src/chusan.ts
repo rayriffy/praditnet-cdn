@@ -13,15 +13,17 @@ import { processMusic } from './modules/chusan/processMusic'
 import { processNameplate } from './modules/chusan/processNameplate'
 import { processSystemVoice } from './modules/chusan/processSystemVoice'
 import { processTrophy } from './modules/chusan/processTrophy'
+import { processMapIcon } from './modules/chusan/processMapIcon'
 
 import { readDDS } from './modules/chusan/readDDS'
-;(async () => {
+;import { processFrame } from './modules/chusan/processFrame'
+(async () => {
   for await (const option of chunithmDirectory.options) {
     console.log(`--- ${path.basename(option)}`)
 
     const [ddsItems] = await Promise.all([readDDS(option)])
 
-    const [characters, musics, systemVoices, namePlates, trophies, avatarAccessories] =
+    const [characters, musics, systemVoices, namePlates, trophies, avatarAccessories, mapIcons, frames] =
       await Promise.all([
         processCharacter(option, ddsItems),
         processMusic(option),
@@ -29,6 +31,8 @@ import { readDDS } from './modules/chusan/readDDS'
         processNameplate(option),
         processTrophy(option),
         processAvatarAccessory(option),
+        processMapIcon(option),
+        processFrame(option)
       ])
 
     const knex = createKnexInstance()
@@ -39,6 +43,8 @@ import { readDDS } from './modules/chusan/readDDS'
       databaseChunithmTrophy,
       databaseChunithmCharcter,
       databaseChunithmAvatarAccessory,
+      databaseChunithmMapIcon,
+      databaseChunithmFrame,
     ] = await Promise.all([
       knex('praditnet_chunithm_music').select('*'),
       knex('praditnet_chunithm_systemVoice').select('*'),
@@ -46,6 +52,8 @@ import { readDDS } from './modules/chusan/readDDS'
       knex('praditnet_chunithm_trophy').select('*'),
       knex('praditnet_chunithm_character').select('*'),
       knex('praditnet_chunithm_avatarAccessory').select('*'),
+      knex('praditnet_chunithm_mapIcon').select('*'),
+      knex('praditnet_chunithm_frame').select('*'),
     ])
 
     // update database for chunithm musics
@@ -113,6 +121,30 @@ import { readDDS } from './modules/chusan/readDDS'
       if (!targetAvatarAccessory) {
         console.log(`avatarAccessory:write ${avatarAccessory.id}`)
         await knex('praditnet_chunithm_avatarAccessory').insert(avatarAccessory)
+      }
+    }
+
+    // update database for chunithm mapIcons
+    for await (const mapIcon of mapIcons) {
+      const targetMapIcon = databaseChunithmMapIcon.find(
+        o => o.id === mapIcon.id
+      )
+
+      if (!targetMapIcon) {
+        console.log(`mapIcon:write ${mapIcon.id}`)
+        await knex('praditnet_chunithm_mapIcon').insert(mapIcon)
+      }
+    }
+
+    // update database for chunithm frames
+    for await (const frame of frames) {
+      const targetFrame = databaseChunithmFrame.find(
+        o => o.id === frame.id
+      )
+
+      if (!targetFrame) {
+        console.log(`frame:write ${frame.id}`)
+        await knex('praditnet_chunithm_frame').insert(frame)
       }
     }
 
