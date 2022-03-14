@@ -4,6 +4,7 @@ import path from 'path'
 import xml2js from 'xml2js'
 
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 import { DDSImage } from './@types/DDSImage'
@@ -42,6 +43,7 @@ export const processCharacter = async (chunithmOptionDirectory: string, ddsItems
       await Promise.all(Object.entries(ddsItems.find(o => o.name === character.CharaData.defaultImages[0].str[0]).file).map(async ([key, value]) => {
         // render file to output
         const outputDirectory = path.join(publicDirectory, 'chunithm', 'character', key)
+        const temporaryFilePath = path.join(outputDirectory, `${value.fileName}_TMP.png`)
         const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
     
         if (!fs.existsSync(outputDirectory)) {
@@ -53,9 +55,17 @@ export const processCharacter = async (chunithmOptionDirectory: string, ddsItems
         if (!fs.existsSync(expectedFilePath)) {
           await promiseSpawn('convert', [
             `'${value.fullPath}'`,
-            `'${expectedFilePath}'`,
+            `'${temporaryFilePath}'`,
           ], {
             shell: true,
+          })
+
+          await buildAsset(
+            temporaryFilePath,
+            expectedFilePath,
+          )
+          fs.rmSync(temporaryFilePath, {
+            force: true
           })
         }
       }))

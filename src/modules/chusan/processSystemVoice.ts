@@ -5,6 +5,7 @@ import xml2js from 'xml2js'
 import { extractorDirectory } from '../../constants/extractorDirectory'
 
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processSystemVoice = async (chunithmOptionDirectory: string) => {
@@ -40,6 +41,7 @@ export const processSystemVoice = async (chunithmOptionDirectory: string) => {
      * Extract system voice icon
      */
     const outputIconDirectory = path.join(publicDirectory, 'chunithm', 'systemVoice', 'icon')
+    const temporaryFilePath = path.join(outputIconDirectory, `${payload.id}_TMP.png`)
     const expectedIconFilePath = path.join(outputIconDirectory, `${payload.id}.png`)
 
     if (!fs.existsSync(outputIconDirectory)) {
@@ -51,9 +53,17 @@ export const processSystemVoice = async (chunithmOptionDirectory: string) => {
     if (!fs.existsSync(expectedIconFilePath)) {
       await promiseSpawn('convert', [
         `'${path.join(systemVoiceDirectory, jacketName)}'`,
-        `'${expectedIconFilePath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(
+        temporaryFilePath,
+        expectedIconFilePath
+      )
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
 

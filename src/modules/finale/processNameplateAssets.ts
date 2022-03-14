@@ -3,6 +3,7 @@ import path from 'path'
 
 import { finaleDirectory } from "../../constants/finaleDirectory"
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processNameplateAssets = async () => {
@@ -16,6 +17,7 @@ export const processNameplateAssets = async () => {
     const nameplateId = Number(nameplateFile.split('_')[0].replace('namep', ''))
     
     const nameplatePath = path.join(nameplateDirectory, nameplateFile)
+    const temporaryFilePath = path.join(nameplateOutputDirectory, `${nameplateId}_TMP.png`)
     const convertedNameplatePath = path.join(nameplateOutputDirectory, `${nameplateId}.png`)
 
     if (!fs.existsSync(nameplateOutputDirectory)) {
@@ -25,9 +27,17 @@ export const processNameplateAssets = async () => {
     if (!fs.existsSync(convertedNameplatePath)) {
       await promiseSpawn('convert', [
         `'${nameplatePath}'`,
-        `'${convertedNameplatePath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(
+        temporaryFilePath,
+        convertedNameplatePath,
+      )
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
   }

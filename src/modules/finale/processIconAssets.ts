@@ -3,6 +3,7 @@ import path from 'path'
 
 import { finaleDirectory } from "../../constants/finaleDirectory"
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processIconAssets = async () => {
@@ -16,6 +17,7 @@ export const processIconAssets = async () => {
     const iconId = Number(iconFile.split('_')[0].replace('icon', ''))
     
     const iconPath = path.join(iconDirectory, iconFile)
+    const temporaryFilePath = path.join(iconOutputDirectory, `${iconId}_TMP.png`)
     const convertedIconPath = path.join(iconOutputDirectory, `${iconId}.png`)
 
     if (!fs.existsSync(iconOutputDirectory)) {
@@ -28,6 +30,14 @@ export const processIconAssets = async () => {
         `'${convertedIconPath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(
+        temporaryFilePath,
+        convertedIconPath,
+      )
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
   }

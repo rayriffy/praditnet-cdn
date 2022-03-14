@@ -4,6 +4,7 @@ import path from 'path'
 import xml2js from 'xml2js'
 
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 
@@ -53,6 +54,7 @@ export const processMusic = async (chunithmOptionDirectory: string) => {
     const jacketName = music.MusicData.jaketFile[0].path[0]
 
     const outputDirectory = path.join(publicDirectory, 'chunithm', 'jacket')
+    const temporaryFilePath = path.join(outputDirectory, `${payload.id}_TMP.png`)
     const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
 
     if (!fs.existsSync(outputDirectory)) {
@@ -64,9 +66,14 @@ export const processMusic = async (chunithmOptionDirectory: string) => {
     if (!fs.existsSync(expectedFilePath)) {
       await promiseSpawn('convert', [
         `'${path.join(musicDirectory, jacketName)}'`,
-        `'${expectedFilePath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(temporaryFilePath, expectedFilePath)
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
 

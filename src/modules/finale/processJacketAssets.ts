@@ -3,6 +3,7 @@ import path from 'path'
 
 import { finaleDirectory } from "../../constants/finaleDirectory"
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processJacketAssets = async () => {
@@ -16,6 +17,7 @@ export const processJacketAssets = async () => {
     const jacketId = Number(jacketFile.split('_')[0])
     
     const jacketPath = path.join(jacketDirectory, jacketFile)
+    const temporaryFilePath = path.join(jacketOutputDirectory, `${jacketId}_TMP.png`)
     const convertedJacketPath = path.join(jacketOutputDirectory, `${jacketId}.png`)
 
     if (!fs.existsSync(jacketOutputDirectory)) {
@@ -25,9 +27,17 @@ export const processJacketAssets = async () => {
     if (!fs.existsSync(convertedJacketPath)) {
       await promiseSpawn('convert', [
         `'${jacketPath}'`,
-        `'${convertedJacketPath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(
+        temporaryFilePath,
+        convertedJacketPath,
+      )
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
   }

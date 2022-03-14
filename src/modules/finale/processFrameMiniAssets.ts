@@ -3,6 +3,7 @@ import path from 'path'
 
 import { finaleDirectory } from "../../constants/finaleDirectory"
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processFrameMiniAssets = async () => {
@@ -16,6 +17,7 @@ export const processFrameMiniAssets = async () => {
     const frameId = Number(frameFile.split('_')[0].replace('frame', ''))
     
     const framePath = path.join(frameDirectory, frameFile)
+    const temporaryFilePath = path.join(frameOutputDirectory, `${frameId}_TMP.png`)
     const convertedFramePath = path.join(frameOutputDirectory, `${frameId}.png`)
 
     if (!fs.existsSync(frameOutputDirectory)) {
@@ -25,9 +27,17 @@ export const processFrameMiniAssets = async () => {
     if (!fs.existsSync(convertedFramePath)) {
       await promiseSpawn('convert', [
         `'${framePath}'`,
-        `'${convertedFramePath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(
+        temporaryFilePath,
+        convertedFramePath,
+      )
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
   }

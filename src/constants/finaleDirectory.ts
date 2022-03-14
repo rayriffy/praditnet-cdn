@@ -1,1 +1,1 @@
-export const finaleDirectory = '/Users/rayriffy/12 - maimai FiNALE'
+export const finaleDirectory = '/Volumes/Arcade/maimai/12 - maimai FiNALE'

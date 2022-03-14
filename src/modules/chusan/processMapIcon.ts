@@ -4,6 +4,7 @@ import path from 'path'
 import xml2js from 'xml2js'
 
 import { publicDirectory } from '../../constants/publicDirectory'
+import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
 export const processMapIcon = async (chunithmOptionDirectory: string) => {
@@ -38,6 +39,7 @@ export const processMapIcon = async (chunithmOptionDirectory: string) => {
     const jacketName = mapIcon.MapIconData.image[0].path[0]
 
     const outputDirectory = path.join(publicDirectory, 'chunithm', 'mapIcon')
+    const temporaryFilePath = path.join(outputDirectory, `${payload.id}_TMP.png`)
     const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
 
     if (!fs.existsSync(outputDirectory)) {
@@ -49,9 +51,14 @@ export const processMapIcon = async (chunithmOptionDirectory: string) => {
     if (!fs.existsSync(expectedFilePath)) {
       await promiseSpawn('convert', [
         `'${path.join(mapIconDirectory, jacketName)}'`,
-        `'${expectedFilePath}'`,
+        `'${temporaryFilePath}'`,
       ], {
         shell: true,
+      })
+
+      await buildAsset(temporaryFilePath, expectedFilePath)
+      fs.rmSync(temporaryFilePath, {
+        force: true
       })
     }
 
