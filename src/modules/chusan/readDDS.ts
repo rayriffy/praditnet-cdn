@@ -5,7 +5,9 @@ import xml2js from 'xml2js'
 
 import { DDSImage } from './@types/DDSImage'
 
-export const readDDS = async (chunithmOptionDirectory: string): Promise<DDSImage[]> => {
+export const readDDS = async (
+  chunithmOptionDirectory: string
+): Promise<DDSImage[]> => {
   const parser = new xml2js.Parser()
 
   const ddsBaseDirectory = path.join(chunithmOptionDirectory, 'ddsImage')
@@ -36,11 +38,17 @@ export const readDDS = async (chunithmOptionDirectory: string): Promise<DDSImage
         file: {
           icon: {
             fileName: dds.DDSImageData.ddsFile2[0].path[0],
-            fullPath: path.join(ddsDirectory, dds.DDSImageData.ddsFile2[0].path[0]),
+            fullPath: path.join(
+              ddsDirectory,
+              dds.DDSImageData.ddsFile2[0].path[0]
+            ),
           },
           deka: {
             fileName: dds.DDSImageData.ddsFile0[0].path[0],
-            fullPath: path.join(ddsDirectory, dds.DDSImageData.ddsFile0[0].path[0]),
+            fullPath: path.join(
+              ddsDirectory,
+              dds.DDSImageData.ddsFile0[0].path[0]
+            ),
           },
         },
       }

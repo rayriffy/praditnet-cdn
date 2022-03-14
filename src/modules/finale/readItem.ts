@@ -47,9 +47,10 @@ export const readItem = async (textouts: Textout[]): Promise<Item[]> => {
       .readFile(decryptedItemPath)
       .then(o => o.toString('utf16le'))
 
-    const rows = `ID, NAME, OLDID, Ver, Linkage, Activity, EVENTPOINT, MaxGetNum, SortID, MilePrice, DispEv, ItemMission, MsEv, MsASub, MsANrm, MsBSub, MsBNrm, MsCSub, MsCNrm, CatID, GenreID, DispMs, MsA, MsAD, MsB, MsBD, MsC, MsCD, 条件名`
-      .split(',')
-      .map(o => o.trim())
+    const rows =
+      `ID, NAME, OLDID, Ver, Linkage, Activity, EVENTPOINT, MaxGetNum, SortID, MilePrice, DispEv, ItemMission, MsEv, MsASub, MsANrm, MsBSub, MsBNrm, MsCSub, MsCNrm, CatID, GenreID, DispMs, MsA, MsAD, MsB, MsBD, MsC, MsCD, 条件名`
+        .split(',')
+        .map(o => o.trim())
     const parsedLine = content
       .split('\n')
       .filter(line => line.startsWith('MMCLCTITEM('))
@@ -70,7 +71,7 @@ export const readItem = async (textouts: Textout[]): Promise<Item[]> => {
       price: Number(item['MilePrice']),
       category: Number(item['CatID']),
       genre: Number(item['GenreID']),
-      text: textouts.find(o => o.key === `${item['条件名']}_0`).value
+      text: textouts.find(o => o.key === `${item['条件名']}_0`).value,
     }))
 
     return processedItem

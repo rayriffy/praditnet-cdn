@@ -16,24 +16,32 @@ import { processTrophy } from './modules/chusan/processTrophy'
 import { processMapIcon } from './modules/chusan/processMapIcon'
 
 import { readDDS } from './modules/chusan/readDDS'
-;import { processFrame } from './modules/chusan/processFrame'
-(async () => {
+import { processFrame } from './modules/chusan/processFrame'
+;(async () => {
   for await (const option of chunithmDirectory.options) {
     console.log(`--- ${path.basename(option)}`)
 
     const [ddsItems] = await Promise.all([readDDS(option)])
 
-    const [characters, musics, systemVoices, namePlates, trophies, avatarAccessories, mapIcons, frames] =
-      await Promise.all([
-        processCharacter(option, ddsItems),
-        processMusic(option),
-        processSystemVoice(option),
-        processNameplate(option),
-        processTrophy(option),
-        processAvatarAccessory(option),
-        processMapIcon(option),
-        processFrame(option)
-      ])
+    const [
+      characters,
+      musics,
+      systemVoices,
+      namePlates,
+      trophies,
+      avatarAccessories,
+      mapIcons,
+      frames,
+    ] = await Promise.all([
+      processCharacter(option, ddsItems),
+      processMusic(option),
+      processSystemVoice(option),
+      processNameplate(option),
+      processTrophy(option),
+      processAvatarAccessory(option),
+      processMapIcon(option),
+      processFrame(option),
+    ])
 
     const knex = createKnexInstance()
     const [
@@ -138,9 +146,7 @@ import { readDDS } from './modules/chusan/readDDS'
 
     // update database for chunithm frames
     for await (const frame of frames) {
-      const targetFrame = databaseChunithmFrame.find(
-        o => o.id === frame.id
-      )
+      const targetFrame = databaseChunithmFrame.find(o => o.id === frame.id)
 
       if (!targetFrame) {
         console.log(`frame:write ${frame.id}`)

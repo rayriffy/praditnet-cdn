@@ -66,17 +66,19 @@ export const readFrame = async (textouts: Textout[], items: Item[]) => {
         )
         return mappedObject
       })
-    
-      const processedFrames = parsedLine.map(item => ({
+
+    const processedFrames = parsedLine
+      .map(item => ({
         id: Number(item['ID']),
         name: textouts.find(o => o.key === item['名前']).value,
         description: items.find(o => o.id === Number(item['ItemID'])).text,
         price: items.find(o => o.id === Number(item['ItemID'])).price,
         genre: items.find(o => o.id === Number(item['ItemID'])).genre,
-      })).filter(o => o.name !== 'フレーム設定なし')
-    
-      // console.log(uniq(parsedLine.map(item => items.find(o => o.id === Number(item['ItemID'])).category)))
+      }))
+      .filter(o => o.name !== 'フレーム設定なし')
 
-      return processedFrames
+    // console.log(uniq(parsedLine.map(item => items.find(o => o.id === Number(item['ItemID'])).category)))
+
+    return processedFrames
   }
 }

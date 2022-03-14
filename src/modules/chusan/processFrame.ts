@@ -25,46 +25,54 @@ export const processFrame = async (chunithmOptionDirectory: string) => {
         fs.statSync(path.join(frameBaseDirectory, o)).isDirectory()
     )
 
-  return await Promise.all(frameDirectories.map(async frameDirectoryName => {
-    const frameDirectory = path.join(frameBaseDirectory, frameDirectoryName)
-    const frame = await parser.parseStringPromise(fs.readFileSync(path.join(frameDirectory, 'Frame.xml')))
-
-    // console.log(mapIcon.MapIconData.name)
-
-    const payload = {
-      id: Number(frame.FrameData.name[0].id[0]),
-      name: frame.FrameData.name[0].str[0],
-    }
-
-    const jacketName = frame.FrameData.image[0].path[0]
-
-    const outputDirectory = path.join(publicDirectory, 'chunithm', 'frame')
-    const temporaryFilePath = path.join(outputDirectory, `${payload.id}_TMP.png`)
-    const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
-
-    if (!fs.existsSync(outputDirectory)) {
-      await fs.promises.mkdir(outputDirectory, {
-        recursive: true,
-      })
-    }
-
-    if (!fs.existsSync(expectedFilePath)) {
-      await promiseSpawn('convert', [
-        `'${path.join(frameDirectory, jacketName)}'`,
-        `'${temporaryFilePath}'`,
-      ], {
-        shell: true,
-      })
-
-      await buildAsset(
-        temporaryFilePath,
-        expectedFilePath,
+  return await Promise.all(
+    frameDirectories.map(async frameDirectoryName => {
+      const frameDirectory = path.join(frameBaseDirectory, frameDirectoryName)
+      const frame = await parser.parseStringPromise(
+        fs.readFileSync(path.join(frameDirectory, 'Frame.xml'))
       )
-      fs.rmSync(temporaryFilePath, {
-        force: true
-      })
-    }
 
-    return payload
-  }))
+      // console.log(mapIcon.MapIconData.name)
+
+      const payload = {
+        id: Number(frame.FrameData.name[0].id[0]),
+        name: frame.FrameData.name[0].str[0],
+      }
+
+      const jacketName = frame.FrameData.image[0].path[0]
+
+      const outputDirectory = path.join(publicDirectory, 'chunithm', 'frame')
+      const temporaryFilePath = path.join(
+        outputDirectory,
+        `${payload.id}_TMP.png`
+      )
+      const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
+
+      if (!fs.existsSync(outputDirectory)) {
+        await fs.promises.mkdir(outputDirectory, {
+          recursive: true,
+        })
+      }
+
+      if (!fs.existsSync(expectedFilePath)) {
+        await promiseSpawn(
+          'convert',
+          [
+            `'${path.join(frameDirectory, jacketName)}'`,
+            `'${temporaryFilePath}'`,
+          ],
+          {
+            shell: true,
+          }
+        )
+
+        await buildAsset(temporaryFilePath, expectedFilePath)
+        fs.rmSync(temporaryFilePath, {
+          force: true,
+        })
+      }
+
+      return payload
+    })
+  )
 }

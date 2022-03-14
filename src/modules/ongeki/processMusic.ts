@@ -37,7 +37,9 @@ export const processMusic = async (option: string) => {
        */
       const fumenToDifficulty = (fumenData: any) => {
         try {
-          return Number(`${fumenData.FumenConstIntegerPart[0]}.${fumenData.FumenConstFractionalPart[0]}`)
+          return Number(
+            `${fumenData.FumenConstIntegerPart[0]}.${fumenData.FumenConstFractionalPart[0]}`
+          )
         } catch (e) {
           return 0
         }
@@ -47,11 +49,21 @@ export const processMusic = async (option: string) => {
         id: Number(item.MusicData.Name[0].id[0]),
         name: item.MusicData.Name[0].str[0],
         artist: item.MusicData.ArtistName[0].str[0],
-        level_basic: fumenToDifficulty(item.MusicData.FumenData[0].FumenData[0]),
-        level_advanced: fumenToDifficulty(item.MusicData.FumenData[0].FumenData[1]),
-        level_expert: fumenToDifficulty(item.MusicData.FumenData[0].FumenData[2]),
-        level_master: fumenToDifficulty(item.MusicData.FumenData[0].FumenData[3]),
-        level_lunatic: fumenToDifficulty(item.MusicData.FumenData[0].FumenData[4]),
+        level_basic: fumenToDifficulty(
+          item.MusicData.FumenData[0].FumenData[0]
+        ),
+        level_advanced: fumenToDifficulty(
+          item.MusicData.FumenData[0].FumenData[1]
+        ),
+        level_expert: fumenToDifficulty(
+          item.MusicData.FumenData[0].FumenData[2]
+        ),
+        level_master: fumenToDifficulty(
+          item.MusicData.FumenData[0].FumenData[3]
+        ),
+        level_lunatic: fumenToDifficulty(
+          item.MusicData.FumenData[0].FumenData[4]
+        ),
         genre: Number(item.MusicData.Genre[0].id[0]),
       }
 
@@ -59,7 +71,7 @@ export const processMusic = async (option: string) => {
       await buildAsset(
         path.join(
           ongekiDirectory.assets,
-          `UI_Jacket_${payload.id.toString().padStart(4, '0')}.png`,
+          `UI_Jacket_${payload.id.toString().padStart(4, '0')}.png`
         ),
         path.join(baseOutputDirectory, `${payload.id}.png`)
       )

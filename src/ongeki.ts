@@ -1,31 +1,25 @@
 import fs from 'fs'
 import path from 'path'
 
+import { ongekiDirectory } from './constants/ongekiDirectory'
+import { createKnexInstance } from './functions/createKnexInstance'
+
 import { processCard } from './modules/ongeki/processCard'
 import { processSkill } from './modules/ongeki/processSkill'
 import { processMusic } from './modules/ongeki/processMusic'
 import { processTrophy } from './modules/ongeki/processTrophy'
 import { processNameplate } from './modules/ongeki/processNameplate'
 
-import { ongekiDirectory } from './constants/ongekiDirectory'
-
-;import { createKnexInstance } from './functions/createKnexInstance';
-(async () => {
+;(async () => {
   for await (const option of ongekiDirectory.options) {
     console.log(`--- ${path.basename(option)}`)
 
-    const [
-      cards,
-      skills,
-      musics,
-      trophies,
-      nameplates,
-    ] = await Promise.all([
+    const [cards, skills, musics, trophies, nameplates] = await Promise.all([
       processCard(option),
       processSkill(option),
       processMusic(option),
       processTrophy(option),
-      processNameplate(option)
+      processNameplate(option),
     ])
 
     const knex = createKnexInstance()

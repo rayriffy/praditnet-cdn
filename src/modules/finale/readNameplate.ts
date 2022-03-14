@@ -66,14 +66,16 @@ export const readNameplate = async (textouts: Textout[], items: Item[]) => {
         )
         return mappedObject
       })
-    
-    const processedNameplates = parsedLine.map(item => ({
-      id: Number(item['ID']),
-      name: textouts.find(o => o.key === item['名前']).value,
-      description: items.find(o => o.id === Number(item['ItemID'])).text,
-      price: items.find(o => o.id === Number(item['ItemID'])).price,
-      genre: items.find(o => o.id === Number(item['ItemID'])).genre,
-    })).filter(o => o.name !== 'ネームプレート設定なし')
+
+    const processedNameplates = parsedLine
+      .map(item => ({
+        id: Number(item['ID']),
+        name: textouts.find(o => o.key === item['名前']).value,
+        description: items.find(o => o.id === Number(item['ItemID'])).text,
+        price: items.find(o => o.id === Number(item['ItemID'])).price,
+        genre: items.find(o => o.id === Number(item['ItemID'])).genre,
+      }))
+      .filter(o => o.name !== 'ネームプレート設定なし')
 
     return processedNameplates
   }

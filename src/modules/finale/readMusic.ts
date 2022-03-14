@@ -45,7 +45,10 @@ export const readMusic = async (textouts: Textout[]): Promise<Music[]> => {
       .readFile(decryptedMusicPath)
       .then(o => o.toString('utf16le'))
 
-    const rows = `ID, NAME, Ver, SubCate, BPM, SortID, ドレス, 暗黒, mile, VL, Event, Rec, PVStart, PVEnd, 曲長さ, オフRanking, AD Def, ReMaster, 特殊PV, チャレンジトラック, ボーナス, GenreID, タイトル, アーティスト, sort_jp_index, sort_ex_index, filename`.split(',').map(o => o.trim())
+    const rows =
+      `ID, NAME, Ver, SubCate, BPM, SortID, ドレス, 暗黒, mile, VL, Event, Rec, PVStart, PVEnd, 曲長さ, オフRanking, AD Def, ReMaster, 特殊PV, チャレンジトラック, ボーナス, GenreID, タイトル, アーティスト, sort_jp_index, sort_ex_index, filename`
+        .split(',')
+        .map(o => o.trim())
     const parsedLine = content
       .split('\n')
       .filter(line => line.startsWith('MMMUSIC('))
@@ -55,10 +58,12 @@ export const readMusic = async (textouts: Textout[]): Promise<Music[]> => {
         return decodedLine.split(',').map(o => o.trim())
       })
       .map(blocks => {
-        const mappedObject = Object.fromEntries(blocks.map((block, i) => [rows[i], block]))
+        const mappedObject = Object.fromEntries(
+          blocks.map((block, i) => [rows[i], block])
+        )
         return mappedObject
       })
-    
+
     const processedMusic = parsedLine.map(item => {
       return {
         id: Number(item['ID']),

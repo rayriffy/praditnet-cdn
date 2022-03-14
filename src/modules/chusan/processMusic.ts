@@ -7,8 +7,6 @@ import { publicDirectory } from '../../constants/publicDirectory'
 import { buildAsset } from '../../functions/buildAsset'
 import { promiseSpawn } from '../../functions/promiseSpawn'
 
-
-
 export const processMusic = async (chunithmOptionDirectory: string) => {
   const parser = new xml2js.Parser()
 
@@ -27,56 +25,77 @@ export const processMusic = async (chunithmOptionDirectory: string) => {
         fs.statSync(path.join(musicBaseDirectory, o)).isDirectory()
     )
 
-  return await Promise.all(musicDirectories.map(async musicDirectoryName => {
-    const musicDirectory = path.join(musicBaseDirectory, musicDirectoryName)
-    const music = await parser.parseStringPromise(fs.readFileSync(path.join(musicDirectory, 'Music.xml')))
+  return await Promise.all(
+    musicDirectories.map(async musicDirectoryName => {
+      const musicDirectory = path.join(musicBaseDirectory, musicDirectoryName)
+      const music = await parser.parseStringPromise(
+        fs.readFileSync(path.join(musicDirectory, 'Music.xml'))
+      )
 
-    const parseMusicFumenDataLevel = musicFumenData => {
-      const level = musicFumenData.level[0]
-      const levelDecimal = musicFumenData.levelDecimal[0]
-      
-      return Number(`${level}.${levelDecimal}`)
-    }
+      const parseMusicFumenDataLevel = musicFumenData => {
+        const level = musicFumenData.level[0]
+        const levelDecimal = musicFumenData.levelDecimal[0]
 
-    const payload = {
-      id: Number(music.MusicData.name[0].id[0]),
-      title: music.MusicData.name[0].str[0],
-      artist: music.MusicData.artistName[0].str[0],
-      level_basic: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[0])),
-      level_advanced: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[1])),
-      level_expert: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[2])),
-      level_master: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[3])),
-      level_ultima: Number(parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[4])),
-      genre: Number(music.MusicData.genreNames[0].list[0].StringID[0].id[0]),
-      // genreName: music.MusicData.genreNames[0].list[0].StringID[0].str[0],
-    }
+        return Number(`${level}.${levelDecimal}`)
+      }
 
-    const jacketName = music.MusicData.jaketFile[0].path[0]
+      const payload = {
+        id: Number(music.MusicData.name[0].id[0]),
+        title: music.MusicData.name[0].str[0],
+        artist: music.MusicData.artistName[0].str[0],
+        level_basic: Number(
+          parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[0])
+        ),
+        level_advanced: Number(
+          parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[1])
+        ),
+        level_expert: Number(
+          parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[2])
+        ),
+        level_master: Number(
+          parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[3])
+        ),
+        level_ultima: Number(
+          parseMusicFumenDataLevel(music.MusicData.fumens[0].MusicFumenData[4])
+        ),
+        genre: Number(music.MusicData.genreNames[0].list[0].StringID[0].id[0]),
+        // genreName: music.MusicData.genreNames[0].list[0].StringID[0].str[0],
+      }
 
-    const outputDirectory = path.join(publicDirectory, 'chunithm', 'jacket')
-    const temporaryFilePath = path.join(outputDirectory, `${payload.id}_TMP.png`)
-    const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
+      const jacketName = music.MusicData.jaketFile[0].path[0]
 
-    if (!fs.existsSync(outputDirectory)) {
-      await fs.promises.mkdir(outputDirectory, {
-        recursive: true,
-      })
-    }
+      const outputDirectory = path.join(publicDirectory, 'chunithm', 'jacket')
+      const temporaryFilePath = path.join(
+        outputDirectory,
+        `${payload.id}_TMP.png`
+      )
+      const expectedFilePath = path.join(outputDirectory, `${payload.id}.png`)
 
-    if (!fs.existsSync(expectedFilePath)) {
-      await promiseSpawn('convert', [
-        `'${path.join(musicDirectory, jacketName)}'`,
-        `'${temporaryFilePath}'`,
-      ], {
-        shell: true,
-      })
+      if (!fs.existsSync(outputDirectory)) {
+        await fs.promises.mkdir(outputDirectory, {
+          recursive: true,
+        })
+      }
 
-      await buildAsset(temporaryFilePath, expectedFilePath)
-      fs.rmSync(temporaryFilePath, {
-        force: true
-      })
-    }
+      if (!fs.existsSync(expectedFilePath)) {
+        await promiseSpawn(
+          'convert',
+          [
+            `'${path.join(musicDirectory, jacketName)}'`,
+            `'${temporaryFilePath}'`,
+          ],
+          {
+            shell: true,
+          }
+        )
 
-    return payload
-  }))
+        await buildAsset(temporaryFilePath, expectedFilePath)
+        fs.rmSync(temporaryFilePath, {
+          force: true,
+        })
+      }
+
+      return payload
+    })
+  )
 }

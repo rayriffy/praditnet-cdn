@@ -40,11 +40,15 @@ export const processNameplate = async (option: string) => {
         name: item.NamePlateData.Name[0].str[0],
       }
 
-      const baseOutputDirectory = path.join(publicDirectory, 'ongeki', 'nameplate')
+      const baseOutputDirectory = path.join(
+        publicDirectory,
+        'ongeki',
+        'nameplate'
+      )
       await buildAsset(
         path.join(
           ongekiDirectory.assets,
-          `UI_UserPlate_Icon_${payload.id.toString().padStart(6, '0')}.png`,
+          `UI_UserPlate_Icon_${payload.id.toString().padStart(6, '0')}.png`
         ),
         path.join(baseOutputDirectory, `${payload.id}.png`)
       )

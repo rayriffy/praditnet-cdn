@@ -21,19 +21,26 @@ export const processTrophy = async (chunithmOptionDirectory: string) => {
         fs.statSync(path.join(trophyVoiceBaseDirectory, o)).isDirectory()
     )
 
-  return await Promise.all(trophyDirectories.map(async trophyDirectoryName => {
-    const trophyDirectory = path.join(trophyVoiceBaseDirectory, trophyDirectoryName)
-    const trophy = await parser.parseStringPromise(fs.readFileSync(path.join(trophyDirectory, 'Trophy.xml')))
+  return await Promise.all(
+    trophyDirectories.map(async trophyDirectoryName => {
+      const trophyDirectory = path.join(
+        trophyVoiceBaseDirectory,
+        trophyDirectoryName
+      )
+      const trophy = await parser.parseStringPromise(
+        fs.readFileSync(path.join(trophyDirectory, 'Trophy.xml'))
+      )
 
-    const payload = {
-      id: Number(trophy.TrophyData.name[0].id[0]),
-      name: trophy.TrophyData.name[0].str[0],
-      description: trophy.TrophyData.explainText[0],
-      rarity: Number(trophy.TrophyData.rareType[0]),
-    }
+      const payload = {
+        id: Number(trophy.TrophyData.name[0].id[0]),
+        name: trophy.TrophyData.name[0].str[0],
+        description: trophy.TrophyData.explainText[0],
+        rarity: Number(trophy.TrophyData.rareType[0]),
+      }
 
-    // console.log(payload)
+      // console.log(payload)
 
-    return payload
-  }))
+      return payload
+    })
+  )
 }
